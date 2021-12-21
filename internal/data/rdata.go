@@ -56,14 +56,14 @@ type Item struct {
 	TotalPrice  *int    `json:"total_price"`
 	NmID        *int    `json:"nm_id"`
 	Brand       *string `json:"brand"`
-	Status      *int `json:"status"`
+	Status      *int    `json:"status"`
 }
 
 func NewOrder(byteOrder []byte) (ReceivedOrder, error) {
 	res := new(ReceivedOrder)
 
 	err := json.Unmarshal(byteOrder, res)
-	
+
 	return *res, err
 }
 

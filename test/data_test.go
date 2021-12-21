@@ -17,10 +17,10 @@ func TestCheck(t *testing.T) {
 	if o.CheckForMissingFields() == nil {
 		t.FailNow()
 	}
-	if d.CheckForMissingFields()== nil {
+	if d.CheckForMissingFields() == nil {
 		t.FailNow()
 	}
-	if p.CheckForMissingFields()== nil {
+	if p.CheckForMissingFields() == nil {
 		t.FailNow()
 	}
 	if i.CheckForMissingFields() == nil {
@@ -39,7 +39,7 @@ func TestCacheAddMethod(t *testing.T) {
 
 		wg.Add(1)
 		go func() {
-			c.AddOrder(data.ReceivedOrder{ OrderUID: &orderUID})
+			c.AddOrder(data.ReceivedOrder{OrderUID: &orderUID})
 			wg.Done()
 		}()
 	}
@@ -54,7 +54,7 @@ func TestCacheGetMethod(t *testing.T) {
 	var orderUID string
 	for x := 0; x < 1000000; x++ {
 		orderUID = strconv.Itoa(x)
-		c.AddOrder(data.ReceivedOrder{ OrderUID: &orderUID})
+		c.AddOrder(data.ReceivedOrder{OrderUID: &orderUID})
 	}
 
 	for x := 0; x < 1000000; x++ {

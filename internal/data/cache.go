@@ -9,8 +9,8 @@ type Cache struct {
 
 func NewCache() *Cache {
 	return &Cache{
-        orderSet: make(map[string]ReceivedOrder),
-    }
+		orderSet: make(map[string]ReceivedOrder),
+	}
 }
 
 func (c *Cache) AddOrder(order ReceivedOrder) {
@@ -24,7 +24,7 @@ func (c *Cache) AddOrder(order ReceivedOrder) {
 func (c *Cache) GetOrder(orderUID string) (ReceivedOrder, bool) {
 	// Если метод нуждается только в чтении — он использует RLock(),
 	// который не заблокирует другие операции чтения,
-	// но заблокирует операцию записи и наоборот. 
+	// но заблокирует операцию записи и наоборот.
 	c.RLock()
 	defer c.RUnlock()
 

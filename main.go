@@ -9,16 +9,15 @@ import (
 	"lzero/internal/serv"
 	"lzero/internal/utils"
 	"net/http"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 )
 
 func main() {
 	l := utils.NewLogger()
 	var wg sync.WaitGroup
-
-	cache := data.NewCache()
-
-	output := make(chan []byte)
 
 	db, err := db.OpenDB() // Open db
 	if err != nil {
@@ -26,6 +25,7 @@ func main() {
 	}
 	defer db.DB.Close()
 
+	cache := data.NewCache()
 	db.Recovery(cache) // Get orders from db
 
 	natsConn, err := nats.NewConnection() // Connect to NATS server
@@ -34,6 +34,7 @@ func main() {
 	}
 	defer natsConn.STANConn.Close()
 
+	output := make(chan []byte)
 	subscription, err := natsConn.Subscribe(output) // Subscribe to NATS streaming
 	if err != nil {
 		l.ErrorLog.Fatal(err)
@@ -61,11 +62,26 @@ func main() {
 			if err != nil {
 				l.ErrorLog.Printf("Broken order: %s\n", err)
 			} else {
-				go db.UploadOrder(order)
-				go cache.AddOrder(order)
+				wg.Add(2)
+
+				go db.UploadOrder(&wg, order)
+				go func() {
+					cache.AddOrder(order)
+					wg.Done()
+				}()
 			}
 		}
 		wg.Done()
+	}()
+
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		l.InfoLog.Println("Stop service")
+		close(output)
+		wg.Wait()
+		os.Exit(1)
 	}()
 
 	server := serv.NewServer(cache)
@@ -78,9 +94,9 @@ func Publisher(nc *nats.NATSConn) {
 	l := utils.NewLogger()
 
 	files, err := ioutil.ReadDir("./test/examples")
-    if err != nil {
-        return
-    }
+	if err != nil {
+		return
+	}
 
 	for _, f := range files {
 		fullName := fmt.Sprintf("./test/examples/%s", f.Name())

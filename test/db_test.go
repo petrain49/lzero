@@ -4,6 +4,7 @@ import (
 	"lzero/internal/data"
 	"lzero/internal/db"
 	"lzero/internal/utils"
+	"sync"
 	"testing"
 )
 
@@ -22,6 +23,9 @@ func TestConnection(t *testing.T) {
 func TestUploadOrder(t *testing.T) {
 	l := utils.NewLogger()
 
+	var wg sync.WaitGroup
+	wg.Add(1)
+
 	db, err := db.OpenDB()
 	if err != nil {
 		t.FailNow()
@@ -35,7 +39,7 @@ func TestUploadOrder(t *testing.T) {
 	}
 
 	l.InfoLog.Println("Upload test data to the DB")
-	err = db.UploadOrder(jsonEx)	
+	err = db.UploadOrder(&wg, jsonEx)
 	if err != nil {
 		t.FailNow()
 	}
@@ -57,7 +61,7 @@ func TestRecovery(t *testing.T) {
 	if err != nil {
 		t.Fail()
 	}
-	
+
 	for _, f := range cache.GetOrders() {
 		if err = f.CheckForMissingFields(); err != nil {
 			t.Fail()
@@ -65,7 +69,6 @@ func TestRecovery(t *testing.T) {
 		t.Log(*f.OrderUID)
 	}
 }
-
 
 func TestCleanTables(t *testing.T) {
 	l := utils.NewLogger()

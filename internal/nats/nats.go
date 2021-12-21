@@ -9,7 +9,7 @@ import (
 const (
 	NATS_CLUSTER = "test-cluster"
 	NATS_SUBJECT = "orders"
-	NATS_CLIENT = "client"
+	NATS_CLIENT  = "client"
 )
 
 type NATSConn struct {
@@ -23,7 +23,7 @@ func NewConnection() (NATSConn, error) {
 
 	nc := new(NATSConn)
 	var err error
-	
+
 	l.InfoLog.Printf("Connect to nats streaming, cluster: %s, client: %s\n", NATS_CLUSTER, NATS_CLIENT)
 	nc.STANConn, err = stan.Connect(NATS_CLUSTER, NATS_CLIENT)
 	if err != nil {
@@ -33,7 +33,7 @@ func NewConnection() (NATSConn, error) {
 	return *nc, err
 }
 
-func (nc *NATSConn) Publish(jsonName []byte)  {
+func (nc *NATSConn) Publish(jsonName []byte) {
 	nc.STANConn.Publish(NATS_SUBJECT, jsonName)
 }
 
@@ -50,8 +50,6 @@ func (nc *NATSConn) Subscribe(output chan<- []byte) (stan.Subscription, error) {
 	if err != nil {
 		l.ErrorLog.Printf("Failed subscription: %s\n", err)
 	}
-
-	sub.Pending()
 
 	return sub, err
 }

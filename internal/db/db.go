@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"lzero/internal/data"
 	"lzero/internal/utils"
+	"sync"
 
 	_ "github.com/lib/pq"
 )
@@ -43,7 +44,7 @@ func OpenDB() (*Database, error) {
 	return &Database{DB: db}, err
 }
 
-func (db *Database) UploadOrder(order data.ReceivedOrder) error {
+func (db *Database) UploadOrder(wg *sync.WaitGroup, order data.ReceivedOrder) error {
 	l := utils.NewLogger()
 
 	orderStatement := "INSERT INTO orders VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)"
@@ -143,6 +144,7 @@ func (db *Database) UploadOrder(order data.ReceivedOrder) error {
 
 	err = tx.Commit()
 	l.InfoLog.Printf("End of the transaction: %s, err: %s", *order.OrderUID, err)
+	wg.Done()
 	return err
 }
 
