@@ -1,12 +1,3 @@
-type Order = {
-    order_uid: string;
-    entry: string;
-    total_price: number;
-    customer_id: string;
-    track_number: string;
-    delivery_service: string;
-}
-  
 async function get() {
     const order = (<HTMLInputElement>document.getElementById("order_uid")).value;
     

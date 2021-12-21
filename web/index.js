@@ -36,12 +36,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 function get() {
     return __awaiter(this, void 0, void 0, function () {
-        var order, res, response, r, rr;
+        var order, response, textResponse, nodeTextString;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     order = document.getElementById("order_uid").value;
-                    res = document.getElementById("result");
                     return [4 /*yield*/, window.fetch('http://127.0.0.1:3000', {
                             method: 'GET',
                             headers: {
@@ -54,9 +53,9 @@ function get() {
                     response = _a.sent();
                     return [4 /*yield*/, response.text()];
                 case 2:
-                    r = _a.sent();
-                    rr = document.createTextNode(r);
-                    document.body.append(rr);
+                    textResponse = _a.sent();
+                    nodeTextString = document.createTextNode(textResponse);
+                    document.body.append(nodeTextString);
                     return [2 /*return*/];
             }
         });
