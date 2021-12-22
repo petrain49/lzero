@@ -38,7 +38,7 @@ func NewServer(orderSet *data.Cache) Server {
 				l.ErrorLog.Println("No order")
 				w.WriteHeader(http.StatusNoContent)
 			} else {
-				l.InfoLog.Println("Sending order")
+				l.InfoLog.Printf("Sending order, UID: %s\n", *resp.OrderUID)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.Header().Set("Access-Control-Allow-Headers", "*")

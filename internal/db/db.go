@@ -52,7 +52,7 @@ func (db *Database) UploadOrder(wg *sync.WaitGroup, order data.ReceivedOrder) er
 	paymentStatement := "INSERT INTO payments VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)"
 	itemStatement := "INSERT INTO items VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)"
 
-	l.InfoLog.Printf("Start of the transaction")
+	l.InfoLog.Printf("Start of the transaction: UID %s", *order.OrderUID)
 	tx, err := db.DB.Begin()
 	if err != nil {
 		l.ErrorLog.Printf("Fail to start the transaction: %s", err)
@@ -143,7 +143,7 @@ func (db *Database) UploadOrder(wg *sync.WaitGroup, order data.ReceivedOrder) er
 	}
 
 	err = tx.Commit()
-	l.InfoLog.Printf("End of the transaction: %s, err: %s", *order.OrderUID, err)
+	l.InfoLog.Printf("End of the transaction: UID %s, err: %s", *order.OrderUID, err)
 	wg.Done()
 	return err
 }

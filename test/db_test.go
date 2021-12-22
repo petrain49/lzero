@@ -43,6 +43,7 @@ func TestUploadOrder(t *testing.T) {
 	if err != nil {
 		t.FailNow()
 	}
+	wg.Wait()
 }
 
 func TestRecovery(t *testing.T) {
@@ -67,33 +68,5 @@ func TestRecovery(t *testing.T) {
 			t.Fail()
 		}
 		t.Log(*f.OrderUID)
-	}
-}
-
-func TestCleanTables(t *testing.T) {
-	l := utils.NewLogger()
-
-	l.InfoLog.Println("Open the DB")
-	db, err := db.OpenDB()
-	if err != nil {
-		t.FailNow()
-	}
-	defer db.DB.Close()
-
-	_, err = db.DB.Exec("DELETE FROM deliveries")
-	if err != nil {
-		t.Fail()
-	}
-	_, err = db.DB.Exec("DELETE FROM payments")
-	if err != nil {
-		t.Fail()
-	}
-	_, err = db.DB.Exec("DELETE FROM items")
-	if err != nil {
-		t.Fail()
-	}
-	_, err = db.DB.Exec("DELETE FROM orders")
-	if err != nil {
-		t.Fail()
 	}
 }

@@ -45,11 +45,6 @@ func main() {
 
 	wg.Add(1)
 	go func() {
-		if !subscription.IsValid() {
-			wg.Done()
-			return
-		}
-
 		var order data.ReceivedOrder
 
 		for byteOrder := range output {
@@ -61,6 +56,10 @@ func main() {
 			err = order.CheckForMissingFields()
 			if err != nil {
 				l.ErrorLog.Printf("Broken order: %s\n", err)
+
+			} else if _, ok := cache.GetOrder(*order.OrderUID); ok {
+				l.ErrorLog.Printf("Order UID:%s already in cache\n", *order.OrderUID)
+
 			} else {
 				wg.Add(2)
 

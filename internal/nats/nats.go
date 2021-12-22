@@ -26,9 +26,6 @@ func NewConnection() (NATSConn, error) {
 
 	l.InfoLog.Printf("Connect to nats streaming, cluster: %s, client: %s\n", NATS_CLUSTER, NATS_CLIENT)
 	nc.STANConn, err = stan.Connect(NATS_CLUSTER, NATS_CLIENT)
-	if err != nil {
-		l.ErrorLog.Println(err)
-	}
 
 	return *nc, err
 }
@@ -40,7 +37,7 @@ func (nc *NATSConn) Publish(jsonName []byte) {
 func (nc *NATSConn) Subscribe(output chan<- []byte) (stan.Subscription, error) {
 	l := utils.NewLogger()
 
-	l.InfoLog.Println("New connection to NATS streaming")
+	l.InfoLog.Println("Subscribe to NATS streaming")
 
 	sub, err := nc.STANConn.Subscribe(NATS_SUBJECT, func(msg *stan.Msg) {
 		l.InfoLog.Println("Received message")
